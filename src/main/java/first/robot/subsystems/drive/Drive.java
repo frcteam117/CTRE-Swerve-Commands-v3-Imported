@@ -65,7 +65,7 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Drive extends Mechanism {
+public class Drive implements Mechanism {
   // TunerConstants doesn't include these constants, so they are declared locally
   private static final double DEADBAND = 0.1;
   private static final DoubleSupplier ANGLE_KP = new TunableDouble("Tuning/ANGLE_KP", 5.0);
@@ -108,7 +108,7 @@ public class Drive extends Mechanism {
 
   static final Lock odometryLock = new ReentrantLock();
   // private final GyroIO gyroIO;
-  private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+  // private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   
   // private final SysIdRoutine sysId;
@@ -116,7 +116,7 @@ public class Drive extends Mechanism {
   //     new Alert("Disconnected gyro, using kinematics as fallback.", Level.HIGH);
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
-  private Rotation2d rawGyroRotation = Rotation2d.kZero;
+  private Rotation2d rawGyroRotation = Rotation2d.ZERO;
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
         new SwerveModulePosition(),
@@ -125,7 +125,7 @@ public class Drive extends Mechanism {
         new SwerveModulePosition()
       };
   private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
+      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.ZERO);
 
   private TunableDouble driveKP =
       new TunableDouble("Drive/drivekP", TunerConstants.BackLeft.DriveMotorGains.kP);
@@ -295,7 +295,7 @@ public class Drive extends Mechanism {
   public void stopWithX() {
     Rotation2d[] headings = new Rotation2d[4];
     for (int i = 0; i < 4; i++) {
-      headings[i] = getModuleTranslations()[i].getAngle();
+      headings[i] = getModuleTranslations()[i].getAngle().orElse(new Rotation2d());
     }
     kinematics.resetHeadings(headings);
     stop();
@@ -373,13 +373,13 @@ public class Drive extends Mechanism {
   }
 
   /** Adds a new timestamped vision measurement. */
-  public void addVisionMeasurement(
-      Pose2d visionRobotPoseMeters,
-      double timestampSeconds,
-      Matrix<N3, N1> visionMeasurementStdDevs) {
-    poseEstimator.addVisionMeasurement(
-        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
-  }
+  // public void addVisionMeasurement(
+  //     Pose2d visionRobotPoseMeters,
+  //     double timestampSeconds,
+  //     Matrix<N3, N1> visionMeasurementStdDevs) {
+  //   poseEstimator.addVisionMeasurement(
+  //       visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+  // }
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
@@ -428,8 +428,8 @@ public class Drive extends Mechanism {
     linearMagnitude = linearMagnitude * linearMagnitude;
 
     // Return new linear velocity
-    return new Pose2d(Translation2d.kZero, linearDirection)
-        .transformBy(new Transform2d(linearMagnitude, 0.0, Rotation2d.kZero))
+    return new Pose2d(Translation2d.ZERO, linearDirection)
+        .transformBy(new Transform2d(linearMagnitude, 0.0, Rotation2d.ZERO))
         .getTranslation();
   }
 

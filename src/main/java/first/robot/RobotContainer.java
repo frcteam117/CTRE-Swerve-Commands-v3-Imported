@@ -5,32 +5,32 @@
 package first.robot;
 
 import org.wpilib.command3.Command;
-import org.wpilib.command3.Coroutine;
-import org.wpilib.command3.Scheduler;
-import org.wpilib.command3.button.CommandGamepad;
+// import org.wpilib.command3.Coroutine;
+// import org.wpilib.command3.Scheduler;
+// import org.wpilib.command3.button.CommandGamepad;
 import org.wpilib.command3.button.CommandNiDsPS5Controller;
 import org.wpilib.driverstation.Gamepad;
-import org.wpilib.framework.OpModeRobot;
-import org.wpilib.framework.OpModeRobot.*;
-import org.wpilib.hardware.hal.RobotMode;
-import org.wpilib.opmode.PeriodicOpMode;
+// import org.wpilib.framework.OpModeRobot;
+// import org.wpilib.framework.OpModeRobot.*;
+// import org.wpilib.hardware.hal.RobotMode;
+// import org.wpilib.opmode.PeriodicOpMode;
 
-import first.robot.subsystems.drive.*;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.smartdashboard.SmartDashboard;
+// import first.robot.subsystems.drive.*;
+import org.wpilib.tunable.Selectable;
+// import org.wpilib.smartdashboard.SmartDashboard;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import org.wpilib.math.geometry.Pose2d;
+// import org.wpilib.math.geometry.Rotation2d;
 
 import first.robot.commands.DriveCommands;
-import first.robot.generated.TunerConstants;
+// import first.robot.generated.TunerConstants;
 import first.robot.subsystems.drive.Drive;
-import first.robot.subsystems.drive.ModuleIO;
-import first.robot.subsystems.drive.ModuleIOSim;
-import first.robot.subsystems.drive.ModuleIOTalonFX;
+// import first.robot.subsystems.drive.ModuleIO;
+// import first.robot.subsystems.drive.ModuleIOSim;
+// import first.robot.subsystems.drive.ModuleIOTalonFX;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+// import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 // import first.robot.opmodes.PrintTeleOpMode;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -42,13 +42,13 @@ public class RobotContainer {
   private final Drive drive;// = new Drive();
 
 
-  private final SendableChooser<Command> autoChooser;// = new SendableChooser<>();
+  private final Selectable<Command> autoChooser;// = new Selectable<>();
 
   private final CommandNiDsPS5Controller controller;// = new CommandNiDsPS5Controller(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(Drive drive,
-  SendableChooser<Command> autoChooser,
+  Selectable<Command> autoChooser,
   CommandNiDsPS5Controller controller) {
 
     this.drive = drive;

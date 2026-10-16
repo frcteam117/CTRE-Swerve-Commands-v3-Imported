@@ -7,7 +7,7 @@ import org.wpilib.command3.Mechanism;
 
 import first.robot.subsystems.can_range.RangeIO.RangeIOInputs;
 
-public class RangeSubsystem extends Mechanism {
+public class RangeSubsystem implements Mechanism {
   RangeIO rangeIO = null;
 
   public RangeSubsystem(RangeIO rangeIO) {

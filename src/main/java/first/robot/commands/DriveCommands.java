@@ -63,8 +63,8 @@ public class DriveCommands {
     linearMagnitude = linearMagnitude * linearMagnitude;
 
     // Return new linear velocity
-    return new Pose2d(Translation2d.kZero, linearDirection)
-        .transformBy(new Transform2d(linearMagnitude, 0.0, Rotation2d.kZero))
+    return new Pose2d(Translation2d.ZERO, linearDirection)
+        .transformBy(new Transform2d(linearMagnitude, 0.0, Rotation2d.ZERO))
         .getTranslation();
   }
 
@@ -73,7 +73,7 @@ public class DriveCommands {
    */
 
 
-  private static Rotation2d rotTarget = Rotation2d.kZero;
+  private static Rotation2d rotTarget = Rotation2d.ZERO;
 
   /**
    * Field relative drive command using joystick for linear control and PID for angular control.
@@ -129,7 +129,7 @@ public class DriveCommands {
     // Create PID controller
     angleController.enableContinuousInput(-Math.PI, Math.PI);
     rotTarget =
-        new Translation2d(rotxSupplier.getAsDouble(), rotySupplier.getAsDouble()).getAngle();
+        new Translation2d(rotxSupplier.getAsDouble(), rotySupplier.getAsDouble()).getAngle().orElse(new Rotation2d());
               angleController.setP(ANGLE_KP.getAsDouble());
               angleController.setD(ANGLE_KD.getAsDouble());
               angleController.setConstraints(
@@ -143,7 +143,7 @@ public class DriveCommands {
               Translation2d rotTargetVec =
                   new Translation2d(rotxSupplier.getAsDouble(), rotySupplier.getAsDouble());
               if (rotTargetVec.getNorm() > .15) {
-                rotTarget = rotTargetVec.getAngle();
+                rotTarget = rotTargetVec.getAngle().orElse(new Rotation2d());
               }
 
               // Calculate angular speed
@@ -291,7 +291,7 @@ public class DriveCommands {
 
 //   private static class WheelRadiusCharacterizationState {
 //     double[] positions = new double[4];
-//     Rotation2d lastAngle = Rotation2d.kZero;
+//     Rotation2d lastAngle = Rotation2d.ZERO;
 //     double gyroDelta = 0.0;
 //   }
 }

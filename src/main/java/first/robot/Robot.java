@@ -13,14 +13,16 @@ import org.wpilib.command3.button.CommandNiDsPS5Controller;
 import org.wpilib.driverstation.MatchState;
 import org.wpilib.driverstation.RobotState;
 import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.MatchType;
 import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.framework.OpModeRobot;
 import org.wpilib.framework.TimedRobot;
 import org.wpilib.hardware.hal.RobotMode;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.smartdashboard.SmartDashboard;
+// import org.wpilib.smartdashboard.SendableChooser;
+// import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.system.DataLogManager;
+import org.wpilib.tunable.Selectable;
 
 import first.robot.generated.TunerConstants;
 import first.robot.subsystems.can_range.RangeIO;
@@ -31,11 +33,11 @@ import first.robot.subsystems.drive.Drive;
 import first.robot.subsystems.drive.ModuleIO;
 import first.robot.subsystems.drive.ModuleIOSim;
 import first.robot.subsystems.drive.ModuleIOTalonFX;
-import first.robot.subsystems.vision.Vision;
-import first.robot.subsystems.vision.VisionConstants;
-import first.robot.subsystems.vision.VisionIO;
-import first.robot.subsystems.vision.VisionIOPhotonVision;
-import first.robot.subsystems.vision.VisionIOPhotonVisionSim;
+// import first.robot.subsystems.vision.Vision;
+// import first.robot.subsystems.vision.VisionConstants;
+// import first.robot.subsystems.vision.VisionIO;
+// import first.robot.subsystems.vision.VisionIOPhotonVision;
+// import first.robot.subsystems.vision.VisionIOPhotonVisionSim;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -49,11 +51,11 @@ public class Robot extends LoggedRobot {
 
   private final Drive drive;
 
-  private final Vision vision;
+  // private final Vision vision;
   
   private final RangeSubsystem range;
 
-  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+  private final Selectable<Command> autoChooser = new Selectable<>();
 
   private final CommandNiDsPS5Controller controller = new CommandNiDsPS5Controller(0);
 
@@ -77,15 +79,15 @@ public class Robot extends LoggedRobot {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0),
-                new VisionIOPhotonVision(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1),
-                new VisionIOPhotonVision(
-                    VisionConstants.camera2Name, VisionConstants.robotToCamera2));
+        // vision =
+        //     new Vision(
+        //         drive::addVisionMeasurement,
+        //         new VisionIOPhotonVision(
+        //             VisionConstants.camera0Name, VisionConstants.robotToCamera0),
+        //         new VisionIOPhotonVision(
+        //             VisionConstants.camera1Name, VisionConstants.robotToCamera1),
+        //         new VisionIOPhotonVision(
+        //             VisionConstants.camera2Name, VisionConstants.robotToCamera2));
 
         range = new RangeSubsystem(new RangeIOCanRange());
 
@@ -100,15 +102,15 @@ public class Robot extends LoggedRobot {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-            vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose),
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose));
+            // vision =
+            // new Vision(
+            //     drive::addVisionMeasurement,
+            //     new VisionIOPhotonVisionSim(
+            //         VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+            //     new VisionIOPhotonVisionSim(
+            //         VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose),
+            //     new VisionIOPhotonVisionSim(
+            //         VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose));
         range = null;
         break;
 
@@ -118,7 +120,7 @@ public class Robot extends LoggedRobot {
             new Drive(
                 // new GyroIO() {},
                 new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO[] {});
+        // vision = new Vision(drive::addVisionMeasurement, new VisionIO[] {});
 
         range = new RangeSubsystem(new RangeIO() {});
         break;
@@ -157,7 +159,7 @@ public class Robot extends LoggedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    vision.periodic();
+    // vision.periodic();
     // because the canrange has no sim implementation
     if (Constants.currentMode != Constants.simMode) {
       range.periodic();
