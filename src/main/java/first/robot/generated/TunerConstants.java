@@ -84,9 +84,11 @@ public class TunerConstants {
   // CAN bus that the devices are located on;
   // All swerve devices must share the same CAN bus
 
-  public static final CANBus kCANBus = new CANBus("Default Name");//, "./logs/example.hoot");
+  public static final CANBus kCANBus1 = new CANBus("can_s1");//, "./logs/example.hoot");
+  //public static final CANBus kCANBus = new CANBus("Default Name");//, "./logs/example.hoot");
+
   //TODO: experiment with setting up multiple CANBuses!
-  
+
   // Measured robot speed (m/s) at 12 V applied output;
   // This is NOT the desired max robot speed - see MaxSpeed in RobotContainer instead;
   // This needs to be tuned to your individual robot

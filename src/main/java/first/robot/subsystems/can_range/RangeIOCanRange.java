@@ -4,7 +4,7 @@ import com.ctre.phoenix6.hardware.CANrange;
 import first.robot.generated.TunerConstants;
 
 public class RangeIOCanRange implements RangeIO {
-  CANrange canRange = new CANrange(15, TunerConstants.kCANBus);
+  CANrange canRange = new CANrange(15, TunerConstants.kCANBus1);
 
   public RangeIOCanRange() {}
 
