@@ -129,17 +129,19 @@ public class DriveCommands {
     return drive.runRepeatedly( () -> {
     // Create PID controller
     angleController.enableContinuousInput(-Math.PI, Math.PI);
-    rotTarget =
-        // new Translation2d(rotxSupplier.getAsDouble(), rotySupplier.getAsDouble()).getAngle().orElse(new Rotation2d());
-        new Translation2d(0, 0).getAngle().orElse(new Rotation2d());
-        // PROBLEM ^^^
+    // rotTarget =
+    //     // new Translation2d(rotxSupplier.getAsDouble(), rotySupplier.getAsDouble()).getAngle().orElse(new Rotation2d());
+    //     new Translation2d(0, 0).getAngle().orElse(new Rotation2d());
+    //     // idk where this part came from, but it literally makes no sense to be here and explains why the wheels would
+    // just spin, bc it ignores the norm checking that happens below
+
+              rotTarget = new Rotation2d();
 
               angleController.setP(ANGLE_KP.getAsDouble());
               angleController.setD(ANGLE_KD.getAsDouble());
               angleController.setConstraints(
                   new TrapezoidProfile.Constraints(
                       ANGLE_MAX_VELOCITY.getAsDouble(), ANGLE_MAX_ACCELERATION.getAsDouble()));
-                    Logger.recordOutput("rotTarget",rotTarget);
               // Get linear velocity
               Translation2d linearVelocity =
                   getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
@@ -149,16 +151,11 @@ public class DriveCommands {
               if (rotTargetVec.getNorm() > .15) {
                 rotTarget = rotTargetVec.getAngle().orElse(new Rotation2d());
               }
-                                  Logger.recordOutput("rotTargetVec",rotTargetVec);
-
 
               // Calculate angular speed
               double omega =
                   angleController.calculate(
                       drive.getRotation().getRadians(), rotTarget.getRadians());
-
-                    Logger.recordOutput("omega",omega);
-
 
               // Convert to field relative speeds & send command
               ChassisVelocities speeds =
