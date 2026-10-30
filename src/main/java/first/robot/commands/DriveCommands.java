@@ -183,6 +183,10 @@ public class DriveCommands {
         // implicitly require `this`
         return drive.runRepeatedly(() -> joystickDrive(drive,xSupplier,ySupplier,omegaSupplier)).named("joystickDriveCommand");
     }
+
+    public static Command resetAngleCommand(Drive drive) {
+        return drive.runOnce(Drive.resetOdometry(drive));
+    }
   
   public static Command joystickDriveAtAngleSequence(
       Drive drive,

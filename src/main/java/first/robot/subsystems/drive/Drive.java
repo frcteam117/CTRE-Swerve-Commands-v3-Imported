@@ -107,8 +107,9 @@ public class Drive implements Mechanism {
           getModuleTranslations());
 
   static final Lock odometryLock = new ReentrantLock();
-  // private final GyroIO gyroIO;
-  // private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+  private final GyroIO gyroIO;
+  private static Rotation2d offset = new Rotation2d(0.0); // Offset to apply to gyro angle for odometry
+  private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   
   // private final SysIdRoutine sysId;
@@ -133,9 +134,9 @@ public class Drive implements Mechanism {
       new TunableDouble("Drive/drivekV", TunerConstants.BackLeft.DriveMotorGains.kV);
 
   public Drive(
-      // GyroIO gyroIO,
+      GyroIO gyroIO,
       ModuleIO flModuleIO, ModuleIO frModuleIO, ModuleIO blModuleIO, ModuleIO brModuleIO) {
-    // this.gyroIO = gyroIO;
+    this.gyroIO = gyroIO;
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
@@ -185,8 +186,8 @@ public class Drive implements Mechanism {
 
   public void periodic() {
     odometryLock.lock(); // Prevents odometry updates while reading data
-    // gyroIO.updateInputs(gyroInputs);
-    // Logger.processInputs("Drive/Gyro", gyroInputs);
+    gyroIO.updateInputs(gyroInputs);
+    Logger.processInputs("Drive/Gyro", gyroInputs);
     for (var module : modules) {
       module.periodic();
     }
@@ -233,23 +234,28 @@ public class Drive implements Mechanism {
                 modulePositions[moduleIndex].angle);
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
       }
-
       // Update gyro angle
-      // if (gyroInputs.connected) {
-      //   // Use the real gyro angle
-      //   rawGyroRotation = gyroInputs.odometryYawPositions[i];
-      // } else {
-      //   // Use the angle delta from the kinematics and module deltas
-      //   Twist2d twist = kinematics.toTwist2d(moduleDeltas);
-      //   rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
-      // }
+      if (gyroInputs.connected && i < gyroInputs.odometryYawPositions.length) {
+        // Use the sampled gyro angle when available.
+        rawGyroRotation = gyroInputs.odometryYawPositions[i];
+      } else {
+        // Fall back to the angle delta from wheel odometry if gyro data is unavailable.
+        Twist2d twist = kinematics.toTwist2d(moduleDeltas);
+        rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
+      }
 
       // Apply update
-      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation.minus(offset), modulePositions);
     }
 
     // Update gyro alert
     //gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+  }
+
+  public static void resetOdometry(Drive drive) {
+    drive.odometryLock.lock();
+    drive.poseEstimator.resetPosition(drive.rawGyroRotation, drive.getModulePositions(), Pose2d.ZERO);
+    drive.odometryLock.unlock();
   }
 
   /**

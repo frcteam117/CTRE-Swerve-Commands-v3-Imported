@@ -72,18 +72,20 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Grab the hatch when the Circle button is pressed.
     // While holding R1, drive at half speed
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDriveCommand(
-    //         drive,
-    //         () -> -controller.getLeftY(),
-    //         () -> -controller.getLeftX(),
-    //         () -> -controller.getRightX()));
+    drive.setDefaultCommand(
+         DriveCommands.joystickDriveCommand(
+             drive,
+             () -> -controller.getLeftY(),
+             () -> -controller.getLeftX(),
+             () -> -controller.getRightX()));
+    /*
     drive.setDefaultCommand(DriveCommands.joystickDriveAtAngleSequence(
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
                 () -> -controller.getRightY(),
                 () -> -controller.getRightX()));
+    */
     // controller
     //     .triangle()
     //     .whileTrue(

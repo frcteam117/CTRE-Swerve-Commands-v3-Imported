@@ -59,6 +59,7 @@ def includeDesktopSupport = true
 // Also defines JUnit 5.
 dependencies {
     annotationProcessor wpi.java.deps.wpilibAnnotations()
+    annotationProcessor 'org.littletonrobotics.akit:akit-autolog:27.0.0-alpha-6'
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 
